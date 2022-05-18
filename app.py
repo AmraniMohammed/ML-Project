@@ -21,9 +21,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
+from sklearn import svm
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder 
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegression, SGDRegressor
 from sklearn.naive_bayes import GaussianNB
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neural_network import MLPRegressor, MLPClassifier
+from sklearn.kernel_ridge import KernelRidge
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, accuracy_score
@@ -98,23 +102,32 @@ class Predictor:
     def set_classifier_properties(self):
         self.type = st.sidebar.selectbox("Algorithm type", ("Classification", "Regression", "Clustering"))
         if self.type == "Regression":
-            self.chosen_classifier = st.sidebar.selectbox("Please choose a classifier", ('Random Forest', 'Linear Regression', 'Neural Network')) 
+            self.chosen_classifier = st.sidebar.selectbox("Please choose a classifier", ('Random Forest', 'Linear Regression', 'SVM Regression', 'SGDRegressor', 'Kernel Ridge Regression','Neural Network')) 
             if self.chosen_classifier == 'Random Forest': 
                 self.n_trees = st.sidebar.slider('number of trees', 1, 1000, 1)
+            elif self.chosen_classifier == 'SGDRegressor':
+                self.max_iterSGD = st.sidebar.slider('max_iter', 1 ,5000 ,1000)
+                self.penaltySGD = st.sidebar.selectbox("Please choose the penalty", ('l1', 'l2'))
+            elif self.chosen_classifier == 'Kernel Ridge Regression':
+                self.alpha = st.sidebar.slider('alpha', 0.0, 1.0 ,1.0)
             elif self.chosen_classifier == 'Neural Network':
-                self.epochs = st.sidebar.slider('number of epochs', 1 ,100 ,10)
-                self.learning_rate = float(st.sidebar.text_input('learning rate:', '0.001'))
+                self.max_iterNN = st.sidebar.slider('Maximum number of iterations', 10,10000 ,200)
+                #self.learning_rate = float(st.sidebar.text_input('learning rate:', '0.001'))
         elif self.type == "Classification":
-            self.chosen_classifier = st.sidebar.selectbox("Please choose a classifier", ('Logistic Regression', 'Naive Bayes', 'Neural Network')) 
+            self.chosen_classifier = st.sidebar.selectbox("Please choose a classifier", ('Logistic Regression', 'Naive Bayes', 'KNeighborsClassifier','Neural Network')) 
             if self.chosen_classifier == 'Logistic Regression': 
                 self.max_iter = st.sidebar.slider('max iterations', 1, 100, 10)
+            if self.chosen_classifier == 'KNeighborsClassifier': 
+                self.n_neighbors = st.sidebar.slider('n_neighbors', 1, 50, 3)
             elif self.chosen_classifier == 'Neural Network':
-                self.epochs = st.sidebar.slider('number of epochs', 1 ,100 ,10)
-                self.learning_rate = float(st.sidebar.text_input('learning rate:', '0.001'))
-                self.number_of_classes = int(st.sidebar.text_input('Number of classes', '2'))
+                self.max_iterNNC = st.sidebar.slider('max iterations', 10 ,10000 ,200)
+                #self.epochs = st.sidebar.slider('number of epochs', 1 ,100 ,10)
+                #self.learning_rate = float(st.sidebar.text_input('learning rate:', '0.001'))
+                #self.number_of_classes = int(st.sidebar.text_input('Number of classes', '2'))
 
         
         elif self.type == "Clustering":
+            st.write("### Soon")
             pass
 
     # Model training and predicitons 
@@ -135,9 +148,32 @@ class Predictor:
                 predictions = self.alg.predict(self.X_test)
                 self.predictions_train = self.alg.predict(self.X_train)
                 self.predictions = predictions
+           
+            elif self.chosen_classifier=='SVM Regression':
+                self.alg = svm.SVR()
+                self.model = self.alg.fit(self.X_train, self.y_train)
+                predictions = self.alg.predict(self.X_test)
+                self.predictions_train = self.alg.predict(self.X_train)
+                self.predictions = predictions
+            elif self.chosen_classifier=='SGDRegressor':
+                self.alg = SGDRegressor(penalty=self.penaltySGD, max_iter=int(self.max_iterSGD))
+                self.model = self.alg.fit(self.X_train, self.y_train)
+                predictions = self.alg.predict(self.X_test)
+                self.predictions_train = self.alg.predict(self.X_train)
+                self.predictions = predictions
+            elif self.chosen_classifier=='Kernel Ridge Regression':
+                self.alg = KernelRidge(alpha=self.alpha)
+                self.model = self.alg.fit(self.X_train, self.y_train)
+                predictions = self.alg.predict(self.X_test)
+                self.predictions_train = self.alg.predict(self.X_train)
+                self.predictions = predictions
 
             elif self.chosen_classifier=='Neural Network':
-                pass
+                self.alg = MLPRegressor(random_state=42, max_iter=self.max_iterNN)
+                self.model = self.alg.fit(self.X_train, self.y_train)
+                predictions = self.alg.predict(self.X_test)
+                self.predictions_train = self.alg.predict(self.X_train)
+                self.predictions = predictions
                 #model = Sequential()
                 #model.add(Dense(500, input_dim = len(self.X_train.columns), activation='relu',))
                 #model.add(Dense(50, activation='relu'))
@@ -164,9 +200,20 @@ class Predictor:
                 predictions = self.alg.predict(self.X_test)
                 self.predictions_train = self.alg.predict(self.X_train)
                 self.predictions = predictions
+            
+            elif self.chosen_classifier=='KNeighborsClassifier':
+                self.alg = KNeighborsClassifier(n_neighbors=self.n_neighbors)
+                self.model = self.alg.fit(self.X_train, self.y_train)
+                predictions = self.alg.predict(self.X_test)
+                self.predictions_train = self.alg.predict(self.X_train)
+                self.predictions = predictions
 
             elif self.chosen_classifier=='Neural Network':
-                pass
+                self.alg = MLPClassifier(random_state=42, max_iter=self.max_iterNNC)
+                self.model = self.alg.fit(self.X_train, self.y_train)
+                predictions = self.alg.predict(self.X_test)
+                self.predictions_train = self.alg.predict(self.X_train)
+                self.predictions = predictions
                 #model = Sequential()
                 #model.add(Dense(500, input_dim = len(self.X_train.columns), activation='relu'))
                 #model.add(Dense(50, activation='relu'))
@@ -199,9 +246,15 @@ class Predictor:
         self.error_metrics = {}
         if self.type == 'Regression':
             self.error_metrics['MSE_test'] = mean_squared_error(self.y_test, self.predictions)
+            self.error_metrics['RMSE_test'] = mean_squared_error(self.y_test, self.predictions, squared=False)
             self.error_metrics['MSE_train'] = mean_squared_error(self.y_train, self.predictions_train)
-            return st.markdown('### MSE Train: ' + str(round(self.error_metrics['MSE_train'], 3)) + 
-            ' -- MSE Test: ' + str(round(self.error_metrics['MSE_test'], 3)))
+            self.error_metrics['RMSE_train'] = mean_squared_error(self.y_train, self.predictions_train, squared=False)
+            return st.markdown(
+                #'### MSE Train: ' + str(round(self.error_metrics['MSE_train'], 3)) + ' -- MSE Test: ' + str(round(self.error_metrics['MSE_test'], 3))
+                '### RMSE Train: ' + str(round(self.error_metrics['RMSE_train'], 3)) + ' -- RMSE Test: ' + str(round(self.error_metrics['RMSE_test'], 3))
+            )
+            
+            
 
         elif self.type == 'Classification':
             self.error_metrics['Accuracy_test'] = accuracy_score(self.y_test, self.predictions)
