@@ -81,8 +81,8 @@ class Predictor:
         data.loc[:, ~cats].join(pd.DataFrame(data=onehotencoder.fit_transform(data.loc[:,cats]).toarray(), columns= onehotencoder.get_feature_names()))
 
         # Set target column
-        target_options = data.columns
-        self.chosen_target = st.sidebar.selectbox("Please choose target column", (target_options))
+        self.target_options = data.columns
+        self.chosen_target = st.sidebar.selectbox("Please choose target column", (self.target_options))
 
         # Standardize the feature data
         X = data.loc[:, data.columns != self.chosen_target]
@@ -116,7 +116,7 @@ class Predictor:
         elif self.type == "Classification":
             self.chosen_classifier = st.sidebar.selectbox("Please choose a classifier", ('Logistic Regression', 'Naive Bayes', 'KNeighborsClassifier','Neural Network')) 
             if self.chosen_classifier == 'Logistic Regression': 
-                self.max_iter = st.sidebar.slider('max iterations', 1, 100, 10)
+                self.max_iter = st.sidebar.slider('Max iterations', 1, 100, 10)
             if self.chosen_classifier == 'KNeighborsClassifier': 
                 self.n_neighbors = st.sidebar.slider('n_neighbors', 1, 50, 3)
             elif self.chosen_classifier == 'Neural Network':
@@ -127,8 +127,10 @@ class Predictor:
 
         
         elif self.type == "Clustering":
-            st.write("### Soon")
-            pass
+            self.chosen_classifier = st.sidebar.selectbox("Please choose a classifier", ('K-Means')) 
+            self.target_options.append('NO Target')
+            if self.chosen_classifier == 'Logistic Regression': 
+                self.max_iter = st.sidebar.slider('Max iterations', 1, 100, 10)
 
     # Model training and predicitons 
     def predict(self, predict_btn):    
