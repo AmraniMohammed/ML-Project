@@ -11,15 +11,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import base64
 import io
-
-##########################################
-
-import streamlit as st
-import pandas as pd
 import os
-import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn import svm
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder 
@@ -47,22 +40,10 @@ from bokeh.plotting import figure
 from bokeh.models import Toggle, BoxAnnotation
 from bokeh.models import Panel, Tabs
 from bokeh.palettes import Set3
-
-# Keras specific
-#import tensorflow as tf
-#from tensorflow.keras.models import Sequential
-#from tensorflow.keras.layers import Dense
-import time 
-
-
-##########################################
-import numpy as np
-import pandas as pd
-import streamlit as st
+import time
 from pandas_profiling import ProfileReport
 from streamlit_pandas_profiling import st_profile_report
 
-##########################################
 
 
 # Main Predicor class
@@ -185,17 +166,7 @@ class Predictor:
                 predictions = self.alg.predict(self.X_test)
                 self.predictions_train = self.alg.predict(self.X_train)
                 self.predictions = predictions
-                #model = Sequential()
-                #model.add(Dense(500, input_dim = len(self.X_train.columns), activation='relu',))
-                #model.add(Dense(50, activation='relu'))
-                #model.add(Dense(50, activation='relu'))
-                #model.add(Dense(1))
 
-                # optimizer = keras.optimizers.SGD(lr=self.learning_rate, decay=1e-6, momentum=0.9, nesterov=True)
-                #model.compile(loss= "mean_squared_error" , optimizer='adam', metrics=["mean_squared_error"])
-                #self.model = model.fit(self.X_train, self.y_train, epochs=self.epochs, batch_size=40)
-                #self.predictions = model.predict(self.X_test)
-                #self.predictions_train = model.predict(self.X_train)
 
         elif self.type == "Classification":
             if self.chosen_classifier == 'Logistic Regression':
@@ -225,18 +196,6 @@ class Predictor:
                 predictions = self.alg.predict(self.X_test)
                 self.predictions_train = self.alg.predict(self.X_train)
                 self.predictions = predictions
-                #model = Sequential()
-                #model.add(Dense(500, input_dim = len(self.X_train.columns), activation='relu'))
-                #model.add(Dense(50, activation='relu'))
-                #model.add(Dense(50, activation='relu'))
-                #model.add(Dense(self.number_of_classes, activation='softmax'))
-
-                #optimizer = tf.keras.optimizers.SGD(lr=self.learning_rate, decay=1e-6, momentum=0.9, nesterov=True)
-                #model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-                #self.model = model.fit(self.X_train, self.y_train, epochs=self.epochs, batch_size=40)
-
-                #self.predictions = model.predict_classes(self.X_test)
-                #self.predictions_train = model.predict_classes(self.X_train)
 
            
 
@@ -434,24 +393,6 @@ if selected == "AutoML":
 
         st.subheader('3. Plot of Model Performance (Test set)')
 
-
-        # with st.markdown('**R-squared**'):
-        #     # Tall
-        #     predictions_test["R-Squared"] = [0 if i < 0 else i for i in predictions_test["R-Squared"] ]
-        #     plt.figure(figsize=(3, 9))
-        #     sns.set_theme(style="whitegrid")
-        #     ax1 = sns.barplot(y=predictions_test.index, x="R-Squared", data=predictions_test)
-        #     ax1.set(xlim=(0, 1))
-        # st.markdown(imagedownload(plt,'plot-r2-tall.pdf'), unsafe_allow_html=True)
-        #     # Wide
-        # plt.figure(figsize=(9, 3))
-        # sns.set_theme(style="whitegrid")
-        # ax1 = sns.barplot(x=predictions_test.index, y="R-Squared", data=predictions_test)
-        # ax1.set(ylim=(0, 1))
-        # plt.xticks(rotation=90)
-        # st.pyplot(plt)
-        # st.markdown(imagedownload(plt,'plot-r2-wide.pdf'), unsafe_allow_html=True)
-
         with st.markdown('**RMSE (capped at 50)**'):
             # Tall
             predictions_test["RMSE"] = [50 if i > 50 else i for i in predictions_test["RMSE"] ]
@@ -508,9 +449,6 @@ if selected == "AutoML":
     # Sidebar - Collects user input features into dataframe
     with st.sidebar.header('1. Upload your CSV data'):
         uploaded_file = st.sidebar.file_uploader("Upload your input CSV file", type=["csv"])
-        st.sidebar.markdown("""
-    [Example CSV input file](https://raw.githubusercontent.com/dataprofessor/data/master/delaney_solubility_with_descriptors.csv)
-    """)
 
     # Sidebar - Specify parameter settings
     with st.sidebar.header('2. Set Parameters'):
@@ -532,19 +470,7 @@ if selected == "AutoML":
     else:
         st.info('Awaiting for CSV file to be uploaded.')
         if st.button('Press to use Example Dataset'):
-            # Diabetes dataset
-            #diabetes = load_diabetes()
-            #X = pd.DataFrame(diabetes.data, columns=diabetes.feature_names)
-            #Y = pd.Series(diabetes.target, name='response')
-            #df = pd.concat( [X,Y], axis=1 )
-
-            #st.markdown('The Diabetes dataset is used as the example.')
-            #st.write(df.head(5))
-
-            # Boston housing dataset
             boston = load_boston()
-            #X = pd.DataFrame(boston.data, columns=boston.feature_names)
-            #Y = pd.Series(boston.target, name='response')
             X = pd.DataFrame(boston.data, columns=boston.feature_names).loc[:100] # FOR TESTING PURPOSE, COMMENT THIS OUT FOR PRODUCTION
             Y = pd.Series(boston.target, name='response').loc[:100] # FOR TESTING PURPOSE, COMMENT THIS OUT FOR PRODUCTION
             df = pd.concat( [X,Y], axis=1 )
