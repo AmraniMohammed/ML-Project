@@ -390,6 +390,9 @@ if selected == "Exploration":
             st_profile_report(pr)
 if selected == "AutoML":
     st.title(f"You have selected {selected}")
+    st.write("""
+    #### Pour le cas de regression seulement
+    """)
     #---------------------------------#
     # Page layout
     ## Page expands to full width
