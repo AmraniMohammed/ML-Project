@@ -12,4 +12,4 @@ The model training process is the process of training the best model for a given
 The AutoML tool is a combination of a model selection process and a model training process.
 
 #### SemiAutoML
-SemiAutoML is a machine learning tool that semi automates the process of selecting the best model for a givendataset by a **user friendly interface**.
+SemiAutoML is a machine learning tool that semi automates the process of selecting the best model for a given dataset by a **user friendly interface**.
