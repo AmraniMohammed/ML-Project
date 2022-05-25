@@ -321,8 +321,8 @@ class Predictor:
 
 selected = option_menu(
                 menu_title=None,  # required
-                options=["Exploration", "AutoML", "SemiAutoML"],  # required
-                icons=["book", "command", "person"],  # optional
+                options=["Description","Exploration", "AutoML", "SemiAutoML"],  # required
+                icons=["book","book", "command", "person"],  # optional
                 menu_icon="cast",  # optional
                 default_index=0,  # optional
                 orientation="horizontal",
@@ -333,6 +333,9 @@ if selected == "Description":
     st.title(f"You have selected {selected}")
     st.markdown("""
     ## This tool will help you to build a machine learning model for your data.
+    #### Exploration
+    In data exploration import data from repository and visualize description of each feature in the data Frame (Missing values rate, descriptive statistique ..)
+    
     #### AutoML
     AutoML is a machine learning tool that automates the process of selecting the best model for a given dataset.
     It is a combination of a model selection process and a model training process.
@@ -342,6 +345,11 @@ if selected == "Description":
 
     #### SemiAutoML
     SemiAutoML is a machine learning tool that semi automates the process of selecting the best model for a given dataset by a **user friendly interface**.
+
+    #### Made by:
+    ###### AMRANI ALAOUI Mohammed
+    ###### FAYTOUT Achraf
+    ###### CHAOUKI Haitam
     """)
 
 if selected == "Exploration":
@@ -424,22 +432,22 @@ if selected == "AutoML":
         st.subheader('3. Plot of Model Performance (Test set)')
 
 
-        with st.markdown('**R-squared**'):
-            # Tall
-            predictions_test["R-Squared"] = [0 if i < 0 else i for i in predictions_test["R-Squared"] ]
-            plt.figure(figsize=(3, 9))
-            sns.set_theme(style="whitegrid")
-            ax1 = sns.barplot(y=predictions_test.index, x="R-Squared", data=predictions_test)
-            ax1.set(xlim=(0, 1))
-        st.markdown(imagedownload(plt,'plot-r2-tall.pdf'), unsafe_allow_html=True)
-            # Wide
-        plt.figure(figsize=(9, 3))
-        sns.set_theme(style="whitegrid")
-        ax1 = sns.barplot(x=predictions_test.index, y="R-Squared", data=predictions_test)
-        ax1.set(ylim=(0, 1))
-        plt.xticks(rotation=90)
-        st.pyplot(plt)
-        st.markdown(imagedownload(plt,'plot-r2-wide.pdf'), unsafe_allow_html=True)
+        # with st.markdown('**R-squared**'):
+        #     # Tall
+        #     predictions_test["R-Squared"] = [0 if i < 0 else i for i in predictions_test["R-Squared"] ]
+        #     plt.figure(figsize=(3, 9))
+        #     sns.set_theme(style="whitegrid")
+        #     ax1 = sns.barplot(y=predictions_test.index, x="R-Squared", data=predictions_test)
+        #     ax1.set(xlim=(0, 1))
+        # st.markdown(imagedownload(plt,'plot-r2-tall.pdf'), unsafe_allow_html=True)
+        #     # Wide
+        # plt.figure(figsize=(9, 3))
+        # sns.set_theme(style="whitegrid")
+        # ax1 = sns.barplot(x=predictions_test.index, y="R-Squared", data=predictions_test)
+        # ax1.set(ylim=(0, 1))
+        # plt.xticks(rotation=90)
+        # st.pyplot(plt)
+        # st.markdown(imagedownload(plt,'plot-r2-wide.pdf'), unsafe_allow_html=True)
 
         with st.markdown('**RMSE (capped at 50)**'):
             # Tall
